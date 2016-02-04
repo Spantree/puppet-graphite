@@ -311,4 +311,15 @@ class graphite::config inherits graphite::params {
       require => File['/opt/graphite/conf/carbon.conf'],
     }
   }
+
+  if $::osfamily == 'Redhat' {
+    exec { 'systemctl-dreload':
+      command   => 'systemctl daemon-reload',
+      subscribe => [
+        File['/etc/init.d/carbon-cache'],
+        File['/etc/init.d/carbon-relay'],
+        File['/etc/init.d/carbon-aggregator'],
+      ],
+    }
+  }
 }
