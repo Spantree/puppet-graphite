@@ -18,6 +18,11 @@ class graphite::config inherits graphite::params {
 
   # we need an web server with python support
   # apache with mod_wsgi or nginx with gunicorn
+
+  Service {
+    provider => systemd,
+  }
+
   case $graphite::gr_web_server {
     'apache'   : {
       include graphite::config_apache
@@ -309,17 +314,6 @@ class graphite::config inherits graphite::params {
       content => template("graphite/etc/init.d/${::osfamily}/carbon-aggregator.erb"),
       mode    => '0750',
       require => File['/opt/graphite/conf/carbon.conf'],
-    }
-  }
-
-  if $::osfamily == 'Redhat' {
-    exec { 'systemctl-dreload':
-      command   => 'systemctl daemon-reload',
-      subscribe => [
-        File['/etc/init.d/carbon-cache'],
-        File['/etc/init.d/carbon-relay'],
-        File['/etc/init.d/carbon-aggregator'],
-      ],
     }
   }
 }
