@@ -268,8 +268,6 @@ class graphite::config inherits graphite::params {
       enable     => true,
       hasrestart => true,
       hasstatus  => true,
-      provider   => systemd,
-      notify     => Exec['systemctl-drl'],
       require    => File['/etc/init.d/carbon-cache'],
     }
 
@@ -287,8 +285,6 @@ class graphite::config inherits graphite::params {
       enable     => true,
       hasrestart => true,
       hasstatus  => true,
-      provider   => systemd,
-      notify     => Exec['systemctl-drl'],
       require    => File['/etc/init.d/carbon-relay'],
     }
 
@@ -306,8 +302,6 @@ class graphite::config inherits graphite::params {
       enable     => true,
       hasrestart => true,
       hasstatus  => true,
-      provider   => systemd,
-      notify     => Exec['systemctl-drl'],
       require    => File['/etc/init.d/carbon-aggregator'],
     }
 
@@ -320,7 +314,8 @@ class graphite::config inherits graphite::params {
   }
 
   exec { 'systemctl-drl':
-    path    => [ '/usr/local/bin', '/usr/local/sbin', '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/' ],
-    command => 'systemctl daemon-reload',
+    path      => [ '/usr/local/bin', '/usr/local/sbin', '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/' ],
+    command   => 'systemctl daemon-reload',
+    subscribe => File['/etc/init.d/carbon-cache'],
   }
 }
