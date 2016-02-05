@@ -19,10 +19,6 @@ class graphite::config inherits graphite::params {
   # we need an web server with python support
   # apache with mod_wsgi or nginx with gunicorn
 
-  Service {
-    provider => systemd,
-  }
-
   case $graphite::gr_web_server {
     'apache'   : {
       include graphite::config_apache
@@ -272,6 +268,7 @@ class graphite::config inherits graphite::params {
       enable     => true,
       hasrestart => true,
       hasstatus  => true,
+      provider   => systemd,
       require    => File['/etc/init.d/carbon-cache'],
     }
 
@@ -279,6 +276,7 @@ class graphite::config inherits graphite::params {
       ensure  => file,
       content => template("graphite/etc/init.d/${::osfamily}/carbon-cache.erb"),
       mode    => '0750',
+      notify  => Exec['systemctl-drl'],
       require => File['/opt/graphite/conf/carbon.conf'],
     }
   }
@@ -289,6 +287,7 @@ class graphite::config inherits graphite::params {
       enable     => true,
       hasrestart => true,
       hasstatus  => true,
+      provider   => systemd,
       require    => File['/etc/init.d/carbon-relay'],
     }
 
@@ -296,6 +295,7 @@ class graphite::config inherits graphite::params {
       ensure  => file,
       content => template("graphite/etc/init.d/${::osfamily}/carbon-relay.erb"),
       mode    => '0750',
+      notify  => Exec['systemctl-drl'],
       require => File['/opt/graphite/conf/carbon.conf'],
     }
   }
@@ -306,6 +306,7 @@ class graphite::config inherits graphite::params {
       enable     => true,
       hasrestart => true,
       hasstatus  => true,
+      provider   => systemd,
       require    => File['/etc/init.d/carbon-aggregator'],
     }
 
@@ -313,7 +314,13 @@ class graphite::config inherits graphite::params {
       ensure  => file,
       content => template("graphite/etc/init.d/${::osfamily}/carbon-aggregator.erb"),
       mode    => '0750',
+      notify  => Exec['systemctl-drl'],
       require => File['/opt/graphite/conf/carbon.conf'],
     }
+  }
+
+  exec { 'systemctl-drl':
+    path    => [ '/usr/local/bin', '/usr/local/sbin', '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/' ],
+    command => 'systemctl daemon-reload',
   }
 }
