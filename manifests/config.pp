@@ -269,6 +269,7 @@ class graphite::config inherits graphite::params {
       hasrestart => true,
       hasstatus  => true,
       provider   => systemd,
+      notify     => Exec['systemctl-drl'],
       require    => File['/etc/init.d/carbon-cache'],
     }
 
@@ -276,7 +277,6 @@ class graphite::config inherits graphite::params {
       ensure  => file,
       content => template("graphite/etc/init.d/${::osfamily}/carbon-cache.erb"),
       mode    => '0750',
-      notify  => Exec['systemctl-drl'],
       require => File['/opt/graphite/conf/carbon.conf'],
     }
   }
@@ -288,6 +288,7 @@ class graphite::config inherits graphite::params {
       hasrestart => true,
       hasstatus  => true,
       provider   => systemd,
+      notify     => Exec['systemctl-drl'],
       require    => File['/etc/init.d/carbon-relay'],
     }
 
@@ -295,7 +296,6 @@ class graphite::config inherits graphite::params {
       ensure  => file,
       content => template("graphite/etc/init.d/${::osfamily}/carbon-relay.erb"),
       mode    => '0750',
-      notify  => Exec['systemctl-drl'],
       require => File['/opt/graphite/conf/carbon.conf'],
     }
   }
@@ -307,6 +307,7 @@ class graphite::config inherits graphite::params {
       hasrestart => true,
       hasstatus  => true,
       provider   => systemd,
+      notify     => Exec['systemctl-drl'],
       require    => File['/etc/init.d/carbon-aggregator'],
     }
 
@@ -314,7 +315,6 @@ class graphite::config inherits graphite::params {
       ensure  => file,
       content => template("graphite/etc/init.d/${::osfamily}/carbon-aggregator.erb"),
       mode    => '0750',
-      notify  => Exec['systemctl-drl'],
       require => File['/opt/graphite/conf/carbon.conf'],
     }
   }
